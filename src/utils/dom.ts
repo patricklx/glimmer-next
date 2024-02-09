@@ -51,6 +51,7 @@ import {
   modifierManager,
   needManagerForModifier,
 } from './managers/modifier';
+import { canCarryHelper, carryHelper, helperManager, needManagerForHelper } from './managers/helper';
 
 // EMPTY DOM PROPS
 export const $_edp = [[], [], []] as Props;
@@ -81,25 +82,10 @@ export function $_modifierHelper(params: any, hash: any) {
 }
 export function $_helperHelper(params: any, hash: any) {
   const helperFn = params.shift();
-  console.log('helper-helper', params, hash);
-  if (EmberFunctionalHelpers.has(helperFn)) {
-    function wrappedHelper(_params: any, _hash: any) {
-      console.log('callingWrapperHelper', {
-        params,
-        _params,
-        hash,
-        _hash,
-      });
-      return $_maybeHelper(helperFn, [...params, ..._params], {
-        ...hash,
-        ..._hash,
-      });
-    }
-    EmberFunctionalHelpers.add(wrappedHelper);
-    return wrappedHelper;
-  } else {
-    throw new Error('Unable to use helper with non-ember helpers');
+  if (canCarryHelper(helperFn)) {
+    return carryHelper(helperFn, params, hash, $_maybeHelper);
   }
+  throw new Error('Unable to use helper with non-ember helpers');
 }
 
 export function resetRoot() {
@@ -627,17 +613,16 @@ export const $_maybeHelper = (
   args: any[],
   _hash: Record<string, unknown>,
 ) => {
-  // @ts-expect-error amount of args
-  const hash = $_args(_hash, false);
+
   // helper manager
   if (isPrimitive(value)) {
     return value;
-  } else if (EmberFunctionalHelpers.has(value)) {
-    return value(args, hash);
-  } else if (value.helperType === 'ember') {
-    const helper = new value();
-    return helper.compute.call(helper, args, hash);
+  } else if (needManagerForHelper(value)) {
+    // @ts-expect-error amount of args
+    const hash = $_args(_hash, false);
+    return helperManager(value, args, hash);
   }
+
   return value(...args);
 };
 
