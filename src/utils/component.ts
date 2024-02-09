@@ -59,21 +59,6 @@ export function renderElement(
       // @ts-expect-error
       renderNode(target, api.text(el), placeholder);
     } else if ($nodes in el) {
-      // el[$nodes].forEach((node) => {
-      //   if (typeof node === 'function') {
-      //     // @ts-expect-error
-      //     let value = node();
-      //     if (isPrimitive(value)) {
-      //       // @ts-expect-error
-      //       value = api.text(value);
-      //     } else if ($node in value) {
-      //       value = value[$node];
-      //     }
-      //     renderNode(target, value, placeholder);
-      //   } else {
-      //     renderNode(target, node, placeholder);
-      //   }
-      // });
       el[$nodes].forEach((node) => {
         renderElement(target, node, placeholder);
       });
