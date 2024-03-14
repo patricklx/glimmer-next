@@ -14,4 +14,4 @@ const test = <template></template>;
 
 <template>
   <textarea>{{current}}</textarea>
-</template>
+</template>;
