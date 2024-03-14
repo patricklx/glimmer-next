@@ -10,6 +10,8 @@ const current = formula(() => {
   return new Date(time.value).toLocaleTimeString();
 });
 
+const test = <template></template>;
+
 <template>
   <textarea>{{current}}</textarea>
 </template>
