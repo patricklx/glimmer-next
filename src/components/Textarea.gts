@@ -12,6 +12,6 @@ const current = formula(() => {
 
 const test = <template></template>;
 
-;<template>
+q + <template>
   <textarea>{{current}}</textarea>
 </template>;
